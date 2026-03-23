@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Bike Security DPP</title>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:#0f172a;
+background-image:
+radial-gradient(circle at 20% 30%, rgba(0,255,255,.15), transparent 40%),
+radial-gradient(circle at 80% 70%, rgba(0,100,255,.15), transparent 40%);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+color:white;
+}
+
+.container{
+width:380px;
+margin-top:80px;
+padding:30px;
+background:rgba(20,30,60,.7);
+border-radius:15px;
+border:1px solid rgba(0,255,255,.3);
+box-shadow:
+0 0 20px rgba(0,255,255,.2),
+0 0 40px rgba(0,0,0,.6);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+color:#00eaff;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:8px;
+border:none;
+background:#1e293b;
+color:white;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:linear-gradient(45deg,#00eaff,#0077ff);
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.hidden{
+display:none;
+}
+
+#map{
+width:90%;
+height:350px;
+margin-top:30px;
+border-radius:12px;
+}
+
+#dashboardTable{
+width:90%;
+margin-top:40px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:#111827;
+}
+
+th{
+background:#0077ff;
+padding:10px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #333;
+text-align:center;
+}
+
+a{
+color:#00eaff;
+text-decoration:none;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- REGISTER -->
+
+<div class="container" id="registerPage">
+
+<h2>Register</h2>
+
+<input type="text" id="name" placeholder="Name">
+<input type="text" id="phone" placeholder="Phone Number">
+<input type="email" id="email" placeholder="Email Address">
+<input type="text" id="bike" placeholder="Bike Number">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="registerUser()">Register</button>
+
+<p>Already registered? <a href="#" onclick="showLogin()">Login</a></p>
+
+</div>
+
+
+<!-- LOGIN -->
+
+<div class="container hidden" id="loginPage">
+
+<h2>Login</h2>
+
+<input type="text" id="loginPhone" placeholder="Phone">
+<input type="password" id="loginPassword" placeholder="Password">
+
+<button onclick="loginUser()">Login</button>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div class="container hidden" id="dashboard">
+
+<h2>Bike Security Dashboard</h2>
+
+<p id="userDetails"></p>
+
+<button onclick="connectMetaMask()">Connect MetaMask</button>
+
+<br><br>
+
+<button onclick="triggerSensor()">Trigger Sensor</button>
+
+<p id="status"></p>
+
+</div>
+
+
+<!-- MAP -->
+
+<div id="dashboardMap" class="hidden">
+
+<h2>Accident Location</h2>
+
+<div id="map"></div>
+
+</div>
+
+
+<!-- SENSOR TABLE -->
+
+<div id="dashboardTable" class="hidden">
+
+<h2>Sensor History</h2>
+
+<table id="sensorTable">
+
+<thead>
+<tr>
+<th>Bike</th>
+<th>Phone</th>
+<th>Time</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</div>
+
+
+<script>
+
+/* EMAILJS INIT */
+
+(function(){
+emailjs.init("RB5ua5fiYucQrisOR");
+})();
+
+/* BLOCKCHAIN VARIABLES */
+
+let web3
+let contract
+let account
+
+const contractAddress="0x110957F319B9ae206Ad7e27D6ca6b4b18e62cc14"
+
+const contractABI=[
+{
+"inputs":[{"internalType":"string","name":"phone","type":"string"}],
+"name":"triggerSensor",
+"outputs":[],
+"stateMutability":"nonpayable",
+"type":"function"
+}
+]
+
+let userData={}
+let map
+let marker
+
+/* SHOW LOGIN */
+
+function showLogin(){
+
+document.getElementById("registerPage").classList.add("hidden")
+document.getElementById("loginPage").classList.remove("hidden")
+
+}
+
+
+/* REGISTER */
+
+function registerUser(){
+
+let name=document.getElementById("name").value
+let phone=document.getElementById("phone").value
+let email=document.getElementById("email").value
+let bike=document.getElementById("bike").value
+let password=document.getElementById("password").value
+
+let users=JSON.parse(localStorage.getItem("users"))||[]
+
+let exist=users.find(u=>u.phone===phone)
+
+if(exist){
+alert("User already exists")
+return
+}
+
+userData={name,phone,email,bike,password}
+
+users.push(userData)
+
+localStorage.setItem("users",JSON.stringify(users))
+
+alert("Registration Successful")
+
+showLogin()
+
+}
+
+
+/* LOGIN */
+
+function loginUser(){
+
+let phone=document.getElementById("loginPhone").value
+let password=document.getElementById("loginPassword").value
+
+let users=JSON.parse(localStorage.getItem("users"))||[]
+
+let found=users.find(u=>u.phone===phone && u.password===password)
+
+if(found){
+
+userData=found
+
+document.getElementById("loginPage").classList.add("hidden")
+document.getElementById("dashboard").classList.remove("hidden")
+document.getElementById("dashboardTable").classList.remove("hidden")
+document.getElementById("dashboardMap").classList.remove("hidden")
+
+document.getElementById("userDetails").innerHTML=
+"Name: "+userData.name+
+"<br>Bike: "+userData.bike+
+"<br>Phone: "+userData.phone+
+"<br>Email: "+userData.email
+
+initMap()
+
+}
+
+else{
+alert("Invalid Login")
+}
+
+}
+
+
+/* CONNECT METAMASK */
+
+async function connectMetaMask(){
+
+if(window.ethereum){
+
+web3=new Web3(window.ethereum)
+
+await window.ethereum.request({method:'eth_requestAccounts'})
+
+const accounts=await web3.eth.getAccounts()
+
+account=accounts[0]
+
+contract=new web3.eth.Contract(contractABI,contractAddress)
+
+alert("MetaMask Connected: "+account)
+
+}
+
+else{
+alert("Install MetaMask")
+}
+
+}
+
+
+/* TRIGGER SENSOR */
+
+async function triggerSensor(){
+
+let phone=userData.phone
+
+document.getElementById("status").innerText="Waiting for MetaMask..."
+
+try{
+
+await contract.methods.triggerSensor(phone).send({
+from:account,
+gas:300000
+})
+
+document.getElementById("status").innerText="Transaction Successful"
+
+addSensorRow("Success")
+
+sendEmergencyEmail()
+
+addMarker()
+
+}
+
+catch(error){
+
+document.getElementById("status").innerText="Transaction Failed"
+
+addSensorRow("Failed")
+
+}
+
+}
+
+
+/* EMAIL ALERT */
+
+function sendEmergencyEmail(){
+
+let params={
+to_email:userData.email,
+bike:userData.bike,
+phone:userData.phone
+}
+
+emailjs.send(
+"service_25zj1aa",
+"template_hceby1l",
+params
+)
+
+}
+
+
+/* TABLE */
+
+function addSensorRow(status){
+
+let table=document.getElementById("sensorTable").getElementsByTagName("tbody")[0]
+
+let row=table.insertRow()
+
+let time=new Date().toLocaleString()
+
+row.insertCell(0).innerHTML=userData.bike
+row.insertCell(1).innerHTML=userData.phone
+row.insertCell(2).innerHTML=time
+row.insertCell(3).innerHTML=status
+
+}
+
+
+/* GOOGLE MAP */
+
+function initMap(){
+
+map=new google.maps.Map(document.getElementById("map"),{
+center:{lat:17.3850,lng:78.4867},
+zoom:12
+})
+
+}
+
+
+/* MARKER */
+
+function addMarker(){
+
+let lat=17.3850+(Math.random()/100)
+let lng=78.4867+(Math.random()/100)
+
+marker=new google.maps.Marker({
+position:{lat:lat,lng:lng},
+map:map,
+title:"Accident Location"
+})
+
+map.setCenter({lat:lat,lng:lng})
+
+}
+
+</script>
+
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+</script>
+
+</body>
+</html>
