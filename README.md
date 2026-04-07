@@ -1,9 +1,28 @@
-ABSTRACT
-This project presents a secure and reliable Bike Security System that uses blockchain technology to protect bikes from theft and ensure safe data handling. The main idea is to give bike owners a smart and digital way to monitor and secure their vehicles, since traditional methods are not always effective. In this system, users first register by creating an account and adding their bike details such as bike number and owner information. After registration, they can log in anytime to access the system. The system is designed to be simple and user-friendly, so even people with basic technical knowledge can use it easily. Sensors connected to the bike continuously monitor for unusual movements or tampering, and if any suspicious activity is detected, the system automatically triggers an alert. Users can also manually activate an alert if they feel their bike is at risk, helping in quick action and theft prevention.
-A key feature of this system is the use of blockchain technology to ensure security and transparency. Every action, such as registration and alert triggering, is recorded as a transaction using smart contracts, which automatically execute operations without the need for a middleman. Once the data is stored on the blockchain, it cannot be modified or deleted, making it highly secure and trustworthy. The system uses MetaMask for user authentication and transaction approval, acting as a digital wallet that ensures only authorized actions are performed. For development and testing, Ganache is used as a local blockchain environment, allowing safe and easy simulation of real blockchain operations. Overall, this system provides a modern, secure, and efficient solution for bike protection using advanced technologies.
+# 🚨 Bike Security DApp (SOS Alert System)
+
+## 📌 Description
+A blockchain-based SOS alert system for vehicle safety. 
+In case of an accident, the system triggers alerts and stores data securely.
+
+## ⚙️ Tech Stack
+- Blockchain: Ganache / Polygon
+- Wallet: MetaMask
+- Backend: Python
+- Frontend: HTML, CSS, JavaScript
+
+## 🚀 Features
+- Accident detection
+- SOS alert trigger
+- Blockchain data storage
+- Wallet integration
+
+## 🛠️ How to Run
+1. Clone repo
+2. Install dependencies
+3. Run backend
+4. Connect MetaMask
 
 
-INTRODUCTION
 2.1 Problem Statement
 Road accidents and emergency situations are increasing day by day, and in many cases, victims do not receive help on time. Often, the injured person is unable to call for assistance due to serious injuries or unconsciousness, which leads to dangerous delays. Existing systems mostly depend on manual reporting, which is not reliable during critical situations. Because of this, there is a strong need for an automated system that can detect emergencies instantly and alert nearby people without any human intervention. At the same time, it is important that the data related to such incidents is stored securely and cannot be altered. To address these issues, this project uses a sensor-based system to detect accidents and automatically generate alerts. The alert is then recorded as a blockchain transaction using MetaMask and smart contracts deployed on Ganache. This approach ensures faster response, reliable communication, and secure data storage, ultimately improving human safety and emergency response efficiency.
 
