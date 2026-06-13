@@ -1,19 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-<title>Bike Security DPP</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bike Security DApp</title>
 
 <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
+
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:'Segoe UI',sans-serif;
 }
+
+/* BODY */
 
 body{
 background:#0f172a;
@@ -25,58 +31,153 @@ display:flex;
 flex-direction:column;
 align-items:center;
 color:white;
+overflow-x:hidden;
 }
+
+/* NAVBAR */
+
+.navbar{
+width:100%;
+padding:18px;
+background:rgba(15,23,42,0.9);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(0,255,255,.3);
+display:flex;
+justify-content:center;
+align-items:center;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 0 15px rgba(0,255,255,.2);
+}
+
+.navbar h1{
+font-size:28px;
+color:#00eaff;
+animation:glow 2s infinite;
+}
+
+/* CONTAINER */
 
 .container{
 width:380px;
-margin-top:80px;
+margin-top:50px;
 padding:30px;
 background:rgba(20,30,60,.7);
-border-radius:15px;
+border-radius:20px;
 border:1px solid rgba(0,255,255,.3);
 box-shadow:
 0 0 20px rgba(0,255,255,.2),
 0 0 40px rgba(0,0,0,.6);
+backdrop-filter:blur(12px);
+animation:fadeIn 1s ease;
+transition:0.3s;
 }
+
+.container:hover{
+transform:translateY(-5px);
+box-shadow:0 0 25px rgba(0,255,255,.4);
+}
+
+/* ANIMATIONS */
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@keyframes glow{
+0%{
+text-shadow:0 0 5px #00eaff;
+}
+50%{
+text-shadow:0 0 20px #00eaff;
+}
+100%{
+text-shadow:0 0 5px #00eaff;
+}
+}
+
+/* HEADINGS */
 
 h2{
 text-align:center;
 margin-bottom:20px;
 color:#00eaff;
+animation:glow 2s infinite;
 }
+
+/* INPUTS */
 
 input{
 width:100%;
-padding:12px;
-margin:8px 0;
-border-radius:8px;
+padding:14px;
+margin:10px 0;
+border-radius:10px;
 border:none;
 background:#1e293b;
 color:white;
+font-size:15px;
+transition:0.3s;
 }
+
+input:focus{
+outline:none;
+box-shadow:0 0 12px #00eaff;
+border:1px solid #00eaff;
+}
+
+/* BUTTONS */
 
 button{
 width:100%;
-padding:12px;
-margin-top:10px;
+padding:14px;
+margin-top:12px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 background:linear-gradient(45deg,#00eaff,#0077ff);
 color:white;
 font-weight:bold;
+font-size:15px;
 cursor:pointer;
+transition:0.3s;
 }
 
-.hidden{
-display:none;
+button:hover{
+transform:scale(1.05);
+box-shadow:0 0 20px #00eaff;
 }
+
+/* LINKS */
+
+a{
+color:#00eaff;
+text-decoration:none;
+font-weight:bold;
+}
+
+a:hover{
+text-decoration:underline;
+}
+
+/* MAP */
 
 #map{
 width:90%;
 height:350px;
 margin-top:30px;
-border-radius:12px;
+border-radius:15px;
+border:2px solid #00eaff;
+box-shadow:0 0 20px rgba(0,255,255,.3);
 }
+
+/* TABLE */
 
 #dashboardTable{
 width:90%;
@@ -87,28 +188,86 @@ table{
 width:100%;
 border-collapse:collapse;
 background:#111827;
+border-radius:15px;
+overflow:hidden;
 }
 
 th{
 background:#0077ff;
-padding:10px;
+padding:14px;
+font-size:16px;
 }
 
 td{
-padding:10px;
+padding:14px;
 border-bottom:1px solid #333;
 text-align:center;
 }
 
-a{
-color:#00eaff;
-text-decoration:none;
+tr:hover{
+background:#1e293b;
+transition:0.3s;
 }
+
+/* STATUS */
+
+#status{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+color:#00ffae;
+}
+
+/* HIDDEN */
+
+.hidden{
+display:none;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:40px;
+padding:20px;
+font-size:14px;
+color:#00eaff;
+text-align:center;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:500px){
+
+.container{
+width:92%;
+padding:20px;
+}
+
+.navbar h1{
+font-size:20px;
+}
+
+table{
+font-size:12px;
+}
+
+button{
+font-size:14px;
+}
+
+}
+
 </style>
 
 </head>
 
 <body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+<h1>🚴 Bike Security DApp</h1>
+</div>
 
 <!-- REGISTER -->
 
@@ -124,10 +283,12 @@ text-decoration:none;
 
 <button onclick="registerUser()">Register</button>
 
-<p>Already registered? <a href="#" onclick="showLogin()">Login</a></p>
+<p style="margin-top:15px;text-align:center;">
+Already registered?
+<a href="#" onclick="showLogin()">Login</a>
+</p>
 
 </div>
-
 
 <!-- LOGIN -->
 
@@ -142,7 +303,6 @@ text-decoration:none;
 
 </div>
 
-
 <!-- DASHBOARD -->
 
 <div class="container hidden" id="dashboard">
@@ -150,6 +310,8 @@ text-decoration:none;
 <h2>Bike Security Dashboard</h2>
 
 <p id="userDetails"></p>
+
+<br>
 
 <button onclick="connectMetaMask()">Connect MetaMask</button>
 
@@ -161,23 +323,21 @@ text-decoration:none;
 
 </div>
 
-
 <!-- MAP -->
 
 <div id="dashboardMap" class="hidden">
 
-<h2>Accident Location</h2>
+<h2 style="margin-top:30px;">Accident Location</h2>
 
 <div id="map"></div>
 
 </div>
 
-
 <!-- SENSOR TABLE -->
 
 <div id="dashboardTable" class="hidden">
 
-<h2>Sensor History</h2>
+<h2 style="margin-bottom:20px;">Sensor History</h2>
 
 <table id="sensorTable">
 
@@ -196,6 +356,9 @@ text-decoration:none;
 
 </div>
 
+<footer>
+Built with Blockchain Security 🚴‍♂️
+</footer>
 
 <script>
 
@@ -236,7 +399,6 @@ document.getElementById("loginPage").classList.remove("hidden")
 
 }
 
-
 /* REGISTER */
 
 function registerUser(){
@@ -267,7 +429,6 @@ alert("Registration Successful")
 showLogin()
 
 }
-
 
 /* LOGIN */
 
@@ -305,7 +466,6 @@ alert("Invalid Login")
 
 }
 
-
 /* CONNECT METAMASK */
 
 async function connectMetaMask(){
@@ -331,7 +491,6 @@ alert("Install MetaMask")
 }
 
 }
-
 
 /* TRIGGER SENSOR */
 
@@ -368,7 +527,6 @@ addSensorRow("Failed")
 
 }
 
-
 /* EMAIL ALERT */
 
 function sendEmergencyEmail(){
@@ -387,7 +545,6 @@ params
 
 }
 
-
 /* TABLE */
 
 function addSensorRow(status){
@@ -405,7 +562,6 @@ row.insertCell(3).innerHTML=status
 
 }
 
-
 /* GOOGLE MAP */
 
 function initMap(){
@@ -416,7 +572,6 @@ zoom:12
 })
 
 }
-
 
 /* MARKER */
 
